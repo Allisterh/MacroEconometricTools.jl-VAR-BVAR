@@ -21,7 +21,6 @@ using Distributed: Distributed
 using StatsBase: StatsBase, fit
 using StatsFuns: StatsFuns, norminvcdf
 using Distributions: Distributions, mean, median, quantile, scale, std
-using CovarianceMatrices: CovarianceMatrices
 using GLM: GLM, coef, dof, fitted, nobs, residuals, stderror, vcov
 using AxisArrays: AxisArrays, AxisArray, Axis
 using Tables: Tables

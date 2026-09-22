@@ -18,6 +18,8 @@ backward-compatible).
 
 ### Removed
 
+- **CovarianceMatrices.jl dependency.** The package imported it without using it.
+
 ### Fixed
 
 ### Performance
