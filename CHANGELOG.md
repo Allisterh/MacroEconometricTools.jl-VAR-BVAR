@@ -10,11 +10,7 @@ backward-compatible).
 
 ## [Unreleased]
 
-### Added
-
-### Changed
-
-### Deprecated
+## [0.1.2] - 2026-10-15
 
 ### Removed
 
@@ -22,7 +18,14 @@ backward-compatible).
 
 ### Fixed
 
-### Performance
+- **Cholesky impact matrix with an ordering.**
+  `structural_impact(Σ_L, ::CholeskyID; ordering_idx)` returned a permuted
+  copy of `Σ_L`, which is not a factor of Σ, so impulse responses were wrong
+  whenever an ordering was given. It now returns the lower Cholesky factor of
+  `Σ[ordering_idx, ordering_idx]` with rows and columns mapped back to the
+  original variable order, matching
+  `rotation_matrix(model, CholeskyID(ordering))`. An `ordering_idx` that is not
+  a permutation of the variables throws an `ArgumentError`.
 
 ## [0.1.1] - 2026-06-30
 
@@ -177,5 +180,6 @@ surface.
   assignments with `copyto!(view(…), …)`, removing a fixable source of per-rep
   allocation.
 
-[Unreleased]: https://github.com/gragusa/MacroEconometricTools.jl/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/gragusa/MacroEconometricTools.jl/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/gragusa/MacroEconometricTools.jl/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/gragusa/MacroEconometricTools.jl/releases/tag/v0.1.1
