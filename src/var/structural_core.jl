@@ -245,14 +245,25 @@ end
     structural_impact(Σ_L, id::CholeskyID; ordering_idx=nothing) -> P
 
 Cholesky impact matrix from an already-computed lower Cholesky factor `Σ_L`
-(where `Σ = Σ_L Σ_L'`). With `ordering_idx`, returns the symmetrically permuted
-factor `Σ_L[ordering_idx, ordering_idx]`.
+(where `Σ = Σ_L Σ_L'`). Without `ordering_idx`, returns `Σ_L` itself.
+
+With `ordering_idx`, a permutation of the variables, returns the lower Cholesky
+factor of `Σ[ordering_idx, ordering_idx]` with its rows and columns mapped back
+to the original variable order, so that column `j` is the shock of variable `j`
+and `P * P' ≈ Σ`. This matches `rotation_matrix(model, CholeskyID(ordering))`.
 
 This is the matrix-level counterpart to `rotation_matrix(model, ::CholeskyID)`;
-it takes the stored factor directly and performs no decomposition.
+it takes the stored factor directly and decomposes only when reordering.
 """
 function structural_impact(Σ_L::AbstractMatrix{T}, ::CholeskyID;
         ordering_idx::Union{Nothing, AbstractVector{Int}} = nothing) where {T}
     ordering_idx === nothing && return Σ_L
-    return Σ_L[ordering_idx, ordering_idx]
+    Base.require_one_based_indexing(Σ_L, ordering_idx)
+    n = LinearAlgebra.checksquare(Σ_L)
+    length(ordering_idx) == n || throw(ArgumentError(
+        "ordering_idx must be a permutation of 1:$n; got $(ordering_idx)"))
+    inv_perm = invperm(ordering_idx)
+    L_rows = Σ_L[ordering_idx, :]
+    P_ordered = cholesky(Symmetric(L_rows * L_rows')).L
+    return P_ordered[inv_perm, inv_perm]
 end
